@@ -1,0 +1,47 @@
+services:
+  web:
+    container_name: syn-books-web
+    image: syn-books-web:latest
+    build:
+      context: ./web/
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./web/:/code
+    command: >
+      sh -c "python3 manage.py makemigrations &&
+             python3 manage.py migrate &&
+             python3 manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - db
+    networks:
+      - syn-books-net
+    restart: always
+
+  db:
+    container_name: postgres
+    image: postgres:12-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: books
+      POSTGRES_USER: user
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - syn-books-net
+    restart: always
+
+volumes:
+  db-data:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: ./db
+
+networks:
+  syn-books-net:
+    driver: bridge

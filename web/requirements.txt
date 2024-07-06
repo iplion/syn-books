@@ -1,0 +1,6 @@
+asgiref==3.8.1
+Django==4.1.13
+dnspython==2.6.1
+sqlparse==0.2.4
+psycopg2==2.9.9
+python-dateutil==2.9.0

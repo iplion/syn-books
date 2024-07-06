@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Список книг{% endblock %}
+
+{% block content %}
+<h1>Список книг</h1>
+
+<div>
+    <a href="?sort_by=title">
+        Заголовок
+        {% if sort_by == 'title' %}▼{% endif %}
+    </a>
+    |
+    <a href="?sort_by=author">
+        Автор
+        {% if sort_by == 'author' %}▼{% endif %}
+    </a>
+    |
+    <a href="?sort_by=year">
+        Год написания
+        {% if sort_by == 'year' %}▼{% endif %}
+    </a>
+</div>
+
+<ul>
+    {% for book in books %}
+        <li>
+            {{ book.title }} - {{ book.author.name }} ({{ book.year }}) возраст: {{ book.get_category_display }}
+            {% if book.status == 'available' %}
+                <form action="{% url 'rent_book' %}" method="get">
+                    <input type="hidden" name="book" value="{{ book.id }}">
+                    <select name="t">
+                        <option value="1">2 недели</option>
+                        <option value="2">месяц</option>
+                        <option value="3">3 месяца</option>
+                    </select>
+                    <input type="submit" value="арендовать">
+                    <a href="{% url 'buy_book' %}?book={{ book.id }}">купить за {{ book.price }} денег</a>
+                </form>
+            {%  else %}
+                <br /><b>аренда/покупка (временно) недоступна</b>
+            {% endif %}
+            <hr />
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
